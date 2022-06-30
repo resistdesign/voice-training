@@ -14,6 +14,7 @@
     "typescript": "^4.7.4"
   },
   "name": "voice-training",
+  "description": "Transgender voice training homework checklist.",
   "version": "0.0.0",
   "main": "index.js",
   "author": "Ryanne Graff",
