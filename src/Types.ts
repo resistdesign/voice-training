@@ -5,6 +5,7 @@ export type FiveLongCompletedRepetitionList = [boolean, boolean, boolean, boolea
 export type ThreeLongCompletedRepetitionList = [boolean, boolean, boolean];
 
 export type Sheet = PersistableItem & {
+  name: string;
   semioccluded: FiveLongCompletedRepetitionList;
   sustainedPitch: FiveLongCompletedRepetitionList;
   functionalPhrases: ThreeLongCompletedRepetitionList;
