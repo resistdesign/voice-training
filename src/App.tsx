@@ -50,7 +50,8 @@ const SheetItem: FC<{ sheet: Sheet; onSelectSheet: (sheet: Sheet) => void; onDel
 
 const GlobalStyle = createGlobalStyle`
   html,
-  body {
+  body,
+  #app-root {
     flex: 0 0 auto;
     display: flex;
     flex-direction: column;
@@ -63,9 +64,16 @@ const GlobalStyle = createGlobalStyle`
     overflow: hidden;
     font-family: sans-serif;
   }
+
+  #app-root {
+    overflow: auto;
+  }
 `;
 
 const AppBase = styled(Column)`
+  flex: 0 0 auto;
+  align-items: stretch;
+  justify-content: flex-start;
   padding: 1em;
 `;
 const Header = styled(Column)`
@@ -122,10 +130,10 @@ export const App: FC = () => {
       </Header>
       {!currentSheet ? (
         <SheetList>
+          <NewSheetButton onClick={onCreateSheet}>+ New Sheet</NewSheetButton>
           {sheetList.map((s, i) => (
             <SheetItem key={`SheetItem:${i}`} sheet={s} onSelectSheet={onSelectSheet} onDeleteSheet={onDeleteSheet} />
           ))}
-          <NewSheetButton onClick={onCreateSheet}>+ New Sheet</NewSheetButton>
         </SheetList>
       ) : undefined}
       {currentSheet ? (
