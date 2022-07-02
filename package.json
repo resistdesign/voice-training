@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "parcel build src/index.html --dist-dir public && cp ./CNAME ./public/CNAME",
+    "build": "parcel build ./src/index.html --dist-dir public && cp ./CNAME ./public/CNAME",
     "start": "parcel ./src/index.html"
   },
   "dependencies": {
@@ -21,7 +21,6 @@
   "name": "voice-training",
   "description": "Transgender voice training homework checklist.",
   "version": "0.0.0",
-  "main": "index.js",
   "author": "Ryanne Graff",
   "license": "MIT",
   "prettier": {
