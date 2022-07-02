@@ -54,9 +54,7 @@ export const App: FC = () => {
         <HeaderTitle>Voice Training</HeaderTitle>
       </Header>
       <Column>Sheet List</Column>
-      <Column>
-        <SheetView />
-      </Column>
+      <Column>{currentSheet ? <SheetView sheet={currentSheet} /> : undefined}</Column>
     </AppBase>
   );
 };
