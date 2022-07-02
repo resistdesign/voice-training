@@ -92,12 +92,13 @@ export const App: FC = () => {
     onRefreshQuery();
   }, [setCurrentSheet, onRefreshQuery]);
   const onCreateSheet = useCallback(() => {
-    SHEET_ITEM_SERVICE.create({
-      ...DEFAULT_SHEET,
-      name: new Date().toLocaleString(),
-    });
-    onRefreshQuery();
-  }, [onRefreshQuery]);
+    setCurrentSheet(
+      SHEET_ITEM_SERVICE.create({
+        ...DEFAULT_SHEET,
+        name: new Date().toLocaleString(),
+      })
+    );
+  }, [onRefreshQuery, setCurrentSheet]);
   const onDeleteSheet = useCallback(
     ({ id }: Sheet) => {
       SHEET_ITEM_SERVICE.delete(id);
