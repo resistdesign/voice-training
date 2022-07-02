@@ -78,7 +78,13 @@ const SheetList = styled(Column)`
 export const App: FC = () => {
   const [query, setQuery] = useState<Partial<Sheet>>({});
   const onRefreshQuery = useCallback(() => setQuery({ ...query }), [query, setQuery]);
-  const sheetList = useMemo<Sheet[]>(() => SHEET_ITEM_SERVICE.search(query), [query]);
+  const sheetList = useMemo<Sheet[]>(
+    () =>
+      SHEET_ITEM_SERVICE.search(query).sort((sA: Sheet, sB: Sheet) =>
+        sA.name > sB.name ? -1 : sA.name < sB.name ? 1 : 0
+      ),
+    [query]
+  );
   const [currentSheet, setCurrentSheet] = useState<Sheet | undefined>(undefined);
   const onSelectSheet = useCallback((sheet: Sheet) => setCurrentSheet(sheet), [setCurrentSheet]);
   const onDeselectSheet = useCallback(() => {

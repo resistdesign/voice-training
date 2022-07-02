@@ -16,6 +16,7 @@ const TitleSpacer = styled(Base)`
   width: auto;
 `;
 const HeartCheckboxBase = styled(Base)<{ checked?: boolean }>`
+  flex: 0 0 auto;
   background: url('${(p) => (p.checked ? HeartIcon : GreyHeartIcon)}');
   width: 2em;
   height: 2em;
@@ -23,6 +24,9 @@ const HeartCheckboxBase = styled(Base)<{ checked?: boolean }>`
 `;
 const CheckboxRow = styled(Row)`
   gap: 0.5em;
+`;
+const QuoteInput = styled.input`
+  width: 50em;
 `;
 const HeartCheckboxForArrayIndex: FC<{
   checked: boolean;
@@ -197,13 +201,13 @@ export const SheetView: FC<SheetViewProps> = ({ sheet, onSheetChange, onClose })
         <Row>Carryover task</Row>
         <CheckboxRow>
           <HeartCheckboxBase checked={carryoverComplete} onClick={onToggleCarryoverComplete} />
-          <input type="text" value={carryoverQuote} onChange={onCarryoverQuoteChange} />
+          <QuoteInput type="text" value={carryoverQuote} onChange={onCarryoverQuoteChange} />
         </CheckboxRow>
       </Column>
       <Column>
         <Row>Notes</Row>
         <Row>
-          <textarea value={notes} onChange={onNotesChange} />
+          <textarea value={notes} cols={100} rows={15} onChange={onNotesChange} />
         </Row>
       </Column>
     </Column>
