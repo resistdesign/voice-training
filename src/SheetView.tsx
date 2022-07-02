@@ -9,6 +9,11 @@ import { Sheet } from './Types';
 
 const Title = styled(Row)`
   font-size: 1.5em;
+  justify-content: stretch;
+`;
+const TitleSpacer = styled(Base)`
+  flex: 1 1 auto;
+  width: auto;
 `;
 const HeartCheckbox = styled(Base)<{ checked?: boolean }>`
   background: url('${(p) => (p.checked ? HeartIcon : GreyHeartIcon)}');
@@ -22,9 +27,11 @@ const CheckboxRow = styled(Row)`
 
 export type SheetViewProps = {
   sheet: Sheet;
+  onSheetChange: (sheet: Sheet) => void;
+  onClose: () => void;
 };
 
-export const SheetView: FC<SheetViewProps> = ({ sheet }) => {
+export const SheetView: FC<SheetViewProps> = ({ sheet, onClose }) => {
   const {
     name,
     semioccluded: [sO1, sO2, sO3, sO4, sO5],
@@ -37,7 +44,11 @@ export const SheetView: FC<SheetViewProps> = ({ sheet }) => {
   return (
     <Column>
       <Column>
-        <Title>{name}</Title>
+        <Title>
+          {name}
+          <TitleSpacer />
+          <button onClick={onClose}>Done</button>
+        </Title>
       </Column>
       <Column>
         <Row>Complete 5 repetitions of semioccluded voice exercises.</Row>

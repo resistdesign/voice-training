@@ -1,13 +1,49 @@
-import React, { FC, useEffect, useMemo, useState } from 'react';
-import { Column, Row } from './Layout';
+import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { Base, Column, Row } from './Layout';
 import { SheetView } from './SheetView';
 import { JSONLocalStorage } from './Utils/JSONLocalStorage';
 import { Sheet } from './Types';
 import styled, { createGlobalStyle } from 'styled-components';
+import { DEFAULT_SHEET } from './Constants';
 
 const APP_NAME = 'VoiceTraining';
 const SHEET_ITEM_TYPE_NAME = 'Sheet';
 const SHEET_ITEM_SERVICE = new JSONLocalStorage<Sheet>(APP_NAME, SHEET_ITEM_TYPE_NAME);
+
+const SheetItemBase = styled(Row)`
+  justify-content: stretch;
+`;
+const SheetItemLabel = styled(Row)`
+  cursor: pointer;
+  letter-spacing: normal;
+
+  transition: letter-spacing 500ms ease-in-out;
+
+  :hover {
+    letter-spacing: 0.0625em;
+  }
+`;
+const SheetItemSpacer = styled(Base)`
+  flex: 1 1 auto;
+  width: auto;
+`;
+const SheetItem: FC<{ sheet: Sheet; onSelectSheet: (sheet: Sheet) => void; onDeleteSheet: (sheet: Sheet) => void }> = ({
+  sheet,
+  onSelectSheet,
+  onDeleteSheet,
+}) => {
+  const { name } = sheet;
+  const onClickLabel = useCallback(() => onSelectSheet(sheet), [sheet, onSelectSheet]);
+  const onClickDeleteButton = useCallback(() => onDeleteSheet(sheet), [sheet, onDeleteSheet]);
+
+  return (
+    <SheetItemBase>
+      <SheetItemLabel onClick={onClickLabel}>{name}</SheetItemLabel>
+      <SheetItemSpacer />
+      <button onClick={onClickDeleteButton}>X</button>
+    </SheetItemBase>
+  );
+};
 
 const GlobalStyle = createGlobalStyle`
   html,
@@ -35,11 +71,37 @@ const Header = styled(Column)`
 const HeaderTitle = styled(Row)`
   font-size: 2em;
 `;
+const SheetList = styled(Column)`
+  gap: 0.5em;
+`;
 
 export const App: FC = () => {
   const [query, setQuery] = useState<Partial<Sheet>>({});
   const sheetList = useMemo<Sheet[]>(() => SHEET_ITEM_SERVICE.search(query), [query]);
   const [currentSheet, setCurrentSheet] = useState<Sheet | undefined>(undefined);
+  const onSelectSheet = useCallback((sheet: Sheet) => setCurrentSheet(sheet), [setCurrentSheet]);
+  const onDeselectSheet = useCallback(() => setCurrentSheet(undefined), [setCurrentSheet]);
+  const onCreateSheet = useCallback(() => {
+    SHEET_ITEM_SERVICE.create({
+      ...DEFAULT_SHEET,
+      name: new Date().toLocaleString(),
+    });
+    setQuery({ ...query });
+  }, [query, setQuery]);
+  const onDeleteSheet = useCallback(
+    ({ id }: Sheet) => {
+      SHEET_ITEM_SERVICE.delete(id);
+      setQuery({ ...query });
+    },
+    [query, setQuery]
+  );
+  const onSheetChange = useCallback(
+    (sheet: Sheet) => {
+      SHEET_ITEM_SERVICE.update(sheet);
+      setQuery({ ...query });
+    },
+    [query, setQuery]
+  );
 
   useEffect(() => {
     if (currentSheet) {
@@ -53,8 +115,19 @@ export const App: FC = () => {
       <Header>
         <HeaderTitle>Voice Training</HeaderTitle>
       </Header>
-      <Column>Sheet List</Column>
-      <Column>{currentSheet ? <SheetView sheet={currentSheet} /> : undefined}</Column>
+      {!currentSheet ? (
+        <SheetList>
+          {sheetList.map((s, i) => (
+            <SheetItem key={`SheetItem:${i}`} sheet={s} onSelectSheet={onSelectSheet} onDeleteSheet={onDeleteSheet} />
+          ))}
+          <button onClick={onCreateSheet}>+ New Sheet</button>
+        </SheetList>
+      ) : undefined}
+      {currentSheet ? (
+        <Column>
+          <SheetView sheet={currentSheet} onSheetChange={onSheetChange} onClose={onDeselectSheet} />
+        </Column>
+      ) : undefined}
     </AppBase>
   );
 };
