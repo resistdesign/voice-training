@@ -27,6 +27,9 @@ const SheetItemSpacer = styled(Base)`
   flex: 1 1 auto;
   width: auto;
 `;
+const NewSheetButton = styled.button`
+  cursor: pointer;
+`;
 const SheetItem: FC<{ sheet: Sheet; onSelectSheet: (sheet: Sheet) => void; onDeleteSheet: (sheet: Sheet) => void }> = ({
   sheet,
   onSelectSheet,
@@ -122,7 +125,7 @@ export const App: FC = () => {
           {sheetList.map((s, i) => (
             <SheetItem key={`SheetItem:${i}`} sheet={s} onSelectSheet={onSelectSheet} onDeleteSheet={onDeleteSheet} />
           ))}
-          <button onClick={onCreateSheet}>+ New Sheet</button>
+          <NewSheetButton onClick={onCreateSheet}>+ New Sheet</NewSheetButton>
         </SheetList>
       ) : undefined}
       {currentSheet ? (
