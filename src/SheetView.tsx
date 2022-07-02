@@ -60,7 +60,11 @@ export const SheetView: FC<SheetViewProps> = ({ sheet, onSheetChange, onClose })
     [sheet, onSheetChange]
   );
   const onToggleBooleanArrayIndex = useCallback(
-    (property: keyof Sheet, index: number) => onSheetPropertyChange(property, !(sheet[property] as boolean[])[index]),
+    (property: keyof Sheet, index: number) =>
+      onSheetPropertyChange(
+        property,
+        (sheet[property] as boolean[]).map((v, i) => (i === index ? !v : v))
+      ),
     [sheet, onSheetPropertyChange]
   );
   const onCarryoverPropertyChange = useCallback(
@@ -192,7 +196,7 @@ export const SheetView: FC<SheetViewProps> = ({ sheet, onSheetChange, onClose })
       <Column>
         <Row>Carryover task</Row>
         <CheckboxRow>
-          <HeartCheckboxBase checked={carryoverComplete} />
+          <HeartCheckboxBase checked={carryoverComplete} onClick={onToggleCarryoverComplete} />
           <input type="text" value={carryoverQuote} onChange={onCarryoverQuoteChange} />
         </CheckboxRow>
       </Column>
