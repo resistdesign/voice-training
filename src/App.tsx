@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Base, Column, Row } from './Layout';
 import { SheetView } from './SheetView';
 import { JSONLocalStorage } from './Utils/JSONLocalStorage';
@@ -77,37 +77,32 @@ const SheetList = styled(Column)`
 
 export const App: FC = () => {
   const [query, setQuery] = useState<Partial<Sheet>>({});
+  const onRefreshQuery = useCallback(() => setQuery({ ...query }), [query, setQuery]);
   const sheetList = useMemo<Sheet[]>(() => SHEET_ITEM_SERVICE.search(query), [query]);
   const [currentSheet, setCurrentSheet] = useState<Sheet | undefined>(undefined);
   const onSelectSheet = useCallback((sheet: Sheet) => setCurrentSheet(sheet), [setCurrentSheet]);
-  const onDeselectSheet = useCallback(() => setCurrentSheet(undefined), [setCurrentSheet]);
+  const onDeselectSheet = useCallback(() => {
+    setCurrentSheet(undefined);
+    onRefreshQuery();
+  }, [setCurrentSheet, onRefreshQuery]);
   const onCreateSheet = useCallback(() => {
     SHEET_ITEM_SERVICE.create({
       ...DEFAULT_SHEET,
       name: new Date().toLocaleString(),
     });
-    setQuery({ ...query });
-  }, [query, setQuery]);
+    onRefreshQuery();
+  }, [onRefreshQuery]);
   const onDeleteSheet = useCallback(
     ({ id }: Sheet) => {
       SHEET_ITEM_SERVICE.delete(id);
-      setQuery({ ...query });
+      onRefreshQuery();
     },
-    [query, setQuery]
+    [onRefreshQuery]
   );
   const onSheetChange = useCallback(
-    (sheet: Sheet) => {
-      SHEET_ITEM_SERVICE.update(sheet);
-      setQuery({ ...query });
-    },
-    [query, setQuery]
+    (sheet: Sheet) => setCurrentSheet(SHEET_ITEM_SERVICE.update(sheet)),
+    [setCurrentSheet]
   );
-
-  useEffect(() => {
-    if (currentSheet) {
-      SHEET_ITEM_SERVICE.update(currentSheet);
-    }
-  }, [currentSheet]);
 
   return (
     <AppBase>
